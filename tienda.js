@@ -1,43 +1,56 @@
-let edad = prompt ("¿Cuál es tu edad?");
+let carrito = []
 
-if (edad >= 18) {
-  alert("Eres mayor de edad.");
-} else {
-  alert("No eres mayor de edad.");
+document.addEventListener("click", (e) => {
+    if (e.target.classList.contains("agregar")) {
+        const nombre = e.target.dataset.nombre;
+        const precio = parseFloat(e.target.dataset.precio)
+        agregarProductoAlCarrito(nombre, precio)
+    }
+});
+
+function agregarProductoAlCarrito(nombre, precio) {
+    const productoExistente = carrito.find((p) => p.nombre === nombre)
+    if (productoExistente) {
+        productoExistente.cantidad++;
+    } else {
+        carrito.push({ nombre, precio, cantidad: 1 })
+    }
+    mostrarCarrito()
 }
 
-class Vino {
- constructor ( nombre, clase, precio) {
-  this.nombre = nombre;
-  this.clase = clase;
-  this.precio = precio;
- }
- mostrar(){
-  console.log ("bodega" ,{this:nombre} ,"corte" ,{this:clase}, "precio", {this:precio})
- }
-} 
+function mostrarCarrito() {
+    const carritoDiv = document.getElementById("carrito")
+    carritoDiv.innerHTML = "";
+    carrito.forEach((producto) => {
+        const productoHTML = document.createElement("div")
+        productoHTML.innerHTML = `
+            ${producto.nombre} x ${producto.cantidad} - $${producto.precio * producto.cantidad}
+            <button class="eliminar" data-nombre="${producto.nombre}">Eliminar</button>
+        `;
+        carritoDiv.appendChild(productoHTML)
+    });
+    calcularTotal();
 
-let vinito1 = new Vino ("arboles", "malbec", 6000);
-let vinito2 = new Vino ("felicien", "cabernet", 8000);
-let vinito3 = new Vino ("mascara", "pinot", 9000);
-let vinito4 = new Vino ("ana", "merlot", 7000);
-
-
-
-carrito= [];
-carrito.push(vinito1);
-carrito.push(vinito2);
-carrito.push(vinito4);
-
-console.log (carrito);
-
-let copa = "copa de regalo"; 
-
-if (carrito.length >= 3) {
-  carrito.push(copa)
-  console.log("sa ha agregado una copa de regalo al carrito")
+    const eliminarBotones = document.getElementsByClassName("eliminar")
+    Array.from(eliminarBotones).forEach((boton) => {
+        boton.addEventListener("click", (e) => {
+            const nombre = e.target.dataset.nombre
+            eliminarProductoDelCarrito(nombre)
+        })
+    })
 }
 
+function calcularTotal() {
+    const total = carrito.reduce((acc, producto) => acc + producto.precio * producto.cantidad, 0)
+    document.getElementById("total").innerHTML = 'Total:' +total
+}
 
-
-
+function eliminarProductoDelCarrito(nombre) {
+    const producto = carrito.find((p) => p.nombre === nombre)
+    if (nombre.cantidad > 1) {
+        producto.cantidad--
+    } else {
+        carrito = carrito.filter((p) => p.nombre !== nombre)
+    }
+    mostrarCarrito()
+}

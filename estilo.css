@@ -1,0 +1,22 @@
+body {
+    text-align: center;
+    background-color: #884c76;
+    font-family: cursive;
+}
+
+.titulo {
+    font-size: 45px;
+    color: #460836;
+
+}
+
+
+
+ul li a {
+    text-decoration: none;
+}
+
+P {
+    font-size: 25px;
+}
+
